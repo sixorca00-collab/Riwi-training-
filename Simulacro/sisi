@@ -1,0 +1,196 @@
+#Create a directories
+import json
+import os
+products = []
+sells = []
+
+#FUNTIONS TO ARTICLES.
+def add_product():
+    print("\n--- add product--")
+    nam = str(input("add name the product: ")).strip()
+    autor = str(input("add autor: "))
+    try:
+        price = float(input("Add the price: "))
+        amount = int(input("amount in the inventory: "))
+    except ValueError:
+        print("You try with numbers valids.")
+        return
+    product ={
+        "name": nam,
+        "autor": autor,
+        "amount": amount,
+        "price": price
+    }
+
+    products.append(product)
+    print("Object add in inventory")
+
+def show_inventory():
+    print("--List of Products--\n")
+    if not products: #The code block, search in inventory if nobody in the inventory say the inventory is null.
+        print("The inventory is null")
+        return
+    for i, p in enumerate(products, start=1):
+        print(f"{i}:{p['name']},{p['autor']},{p['amount']},{p['price']}") #call the keys in the directory created before.
+    
+def update_product():
+    if not products:
+        print("The inventory is null.")
+        return
+    try:
+        n_update = int(input("Add the number the product to update: ")) -1
+        if n_update <0 or n_update >= len(products):
+            print("option is not valid.")
+            return
+    except ValueError:
+        print("datatype incorrect.")
+        return
+    
+    print("Push enter if not wanna change the data.\n") #we ask the new datas. And say push enter if not wanna change the data
+    nam = str(input("\nNew name:")).strip()
+    autor = str(input("\nNew autor:")).strip()
+    price = float(input("\nNew price:"))
+    amount = int(input("\nNew amount:")) 
+
+    if nam:
+        products[n_update]["nam"] = nam
+    if autor:
+        products[n_update]["autor"] = autor
+    if price:
+        try:
+            products[n_update]["price"] = float(price)
+        except ValueError:
+            print("Data is not valid.")
+    if amount:
+        try:
+            products[n_update]["amount"] = int(amount)
+        except ValueError:
+            print("Data is not valid")
+
+    print("Product update succesly.")
+    
+def delete_product():
+    show_inventory()
+    if not products:
+        return
+    try:
+        n_delete = int(input("\nChoose the product to eliminate(Give a number): ")) -1
+        if n_delete > 0 or n_delete >= len(products):
+            print("Product invalid")
+            return
+    except ValueError:
+        print("Invalid option")
+        return
+    products.pop(n_delete)
+    print("Product delete succesly.")
+
+#FUNTIONS TO SELLS.
+def register_sell():
+    print("\n---Register sell--\n")
+    show_inventory()
+    if not products:
+        return
+
+    try:
+        sell = int(input("What's number to product: ")) -1
+        if sell < 0 or sell >= len(products):
+            print("Product is not valid.")
+            return
+    except ValueError:
+        print("Chosse a valid number")
+        return
+
+    product = products[sell]
+    if "sell" not in product:
+        product['sell'] = 0
+
+    try:
+        s_ammo = int(input("Chosse the amount to sell product: "))
+    except ValueError:
+        print("Our data is not valid.")
+        return
+
+    if s_ammo > product["amount"]:
+        print("Don't have us or amount in the inventory")
+        return
+        
+
+    client = str(input("Client name: \n")).strip()
+
+    # Update the inventory
+   
+    product["amount"] -= s_ammo
+    product["sell"] += s_ammo
+
+    sell = {
+        "client": client,
+        "product": product['name'],
+        "amount": s_ammo,
+        "total": product['price'] * s_ammo
+    }
+    sells.append(sell)
+    print("Sell registered with succesly")
+
+def show_sells():
+    print("---History to sells---")
+    if not sells:
+        print("There are not sells registered.")
+        return
+    for i, s in enumerate(sells, start= 1):
+        print(f"{i}|Client:{s['client']}|product: {s['product']}|amount:{s['amount']}|Total:{s['total']}")
+#REPORTS
+def top_3():
+    print("---The articles most sells were---\n")#I don't know use lambda, they did teach me.
+
+    if not products:
+        print("Don't have sells registered.")
+        return
+    #organize the content using lambda
+    organized = sorted(products, key=lambda p: p.get["sells",0], reverse=True)
+    top = organized[:3]
+    for i, p in enumerate(p, start=1):
+        print(f"{i}, {p['name']} - Sells:{p.get('sells,0')}") 
+
+def porcentaje_s():
+    print("\n--- Percentajes to product.---\n")
+
+    t_sells = sum(p["sells"] for p in products)
+
+    if t_sells ==0:
+        print("You haven't sold this.")
+        return
+    for p in products:
+        porcentaje = (p["sells"] / t_sells) * 100
+        print(f"{p['name']}|{porcentaje:.2f}% total to sells")
+file = "productos.json"
+sell = "sells.json"
+def save_datas():
+#Save all the info in a dictionary and the rows be a products
+    with open(file, "w",) as ARC:
+        json.dump(products,ARC, indent=4)
+    print("Save datas succesly.")
+def load_datas():
+
+    global products
+    try:
+        with open("productos.json", "r") as archivo:
+            products = json.load(archivo) 
+            print("Database load succesly.")
+    except FileNotFoundError:
+        print("Not found data, created auto when you save.")
+
+def save_sell():
+    with open(sell, "w",) as s:
+        json.dump(sells,s, indent=4)
+    print("Save datas succesly.")
+
+def load_sell():    
+    
+    global sells
+    try:
+        with open("sells.json", "r") as r:
+            sells = json.load(r) 
+            print("Database load succesly.")
+    except FileNotFoundError:
+        print("Not found data, created auto when you save.")
+
