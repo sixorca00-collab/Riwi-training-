@@ -1,0 +1,54 @@
+def top_3():
+    print("---The articles most sells were---\n")#I don't know use lambda, they did teach me.
+
+    if not products:
+        print("Don't have sells registered.")
+        return
+    #organize the content using lambda
+    organized = sorted(products, key=lambda p: p.get["sells",0], reverse=True)
+    top = organized[:3]
+    for i, p in enumerate(p, start=1):
+        print(f"{i}, {p['name']} - Sells:{p.get('sells,0')}") 
+
+def porcentaje_s():
+    print("\n--- Percentajes to product.---\n")
+
+    t_sells = sum(p["sells"] for p in products)
+
+    if t_sells ==0:
+        print("You haven't sold this.")
+        return
+    for p in products:
+        porcentaje = (p["sells"] / t_sells) * 100
+        print(f"{p['name']}|{porcentaje:.2f}% total to sells")
+file = "productos.json"
+sell = "sells.json"
+def save_datas():
+#Save all the info in a dictionary and the rows be a products
+    with open(file, "w",) as ARC:
+        json.dump(products,ARC, indent=4)
+    print("Save datas succesly.")
+def load_datas():
+
+    global products
+    try:
+        with open("productos.json", "r") as archivo:
+            products = json.load(archivo) 
+            print("Database load succesly.")
+    except FileNotFoundError:
+        print("Not found data, created auto when you save.")
+
+def save_sell():
+    with open(sell, "w",) as s:
+        json.dump(sells,s, indent=4)
+    print("Save datas succesly.")
+
+def load_sell():    
+    
+    global sells
+    try:
+        with open("sells.json", "r") as r:
+            sells = json.load(r) 
+            print("Database load succesly.")
+    except FileNotFoundError:
+        print("Not found data, created auto when you save.")
